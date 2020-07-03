@@ -1,0 +1,43 @@
+version: '3.4'
+
+x-db-settings: &db-settings
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: dbpass
+
+services:
+  db:
+    image: postgres:12-alpine
+    container_name: db
+    restart: always
+    environment:
+      <<: *db-settings
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+    networks:
+      - backend
+    ports:
+      - "5432:5432"
+  web:
+    build: .
+    container_name: web
+    command: python manage.py runserver 0.0.0.0:8000
+    restart: always
+    depends_on:
+      - db
+    environment:
+      <<: *db-settings
+      DB_HOST: db
+      DB_PORT: 5432
+    volumes:
+      - .:/opt/django
+    networks:
+      - backend
+    ports:
+      - "8000:8000"
+
+volumes:
+  database-data:
+
+networks:
+  backend:
