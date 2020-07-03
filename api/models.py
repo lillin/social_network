@@ -14,3 +14,10 @@ class Post(models.Model):
 
     def __str__(self):
         return f'Post {self.title}'
+
+
+class Like(models.Model):
+    """Represent user's likes per post"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    created_at = models.DateTimeField(auto_now_add=True)
