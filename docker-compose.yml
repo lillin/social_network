@@ -14,8 +14,6 @@ services:
       <<: *db-settings
     volumes:
       - database-data:/var/lib/postgresql/data/
-    networks:
-      - backend
     ports:
       - "5432:5432"
   web:
@@ -26,18 +24,14 @@ services:
     depends_on:
       - db
     environment:
+      DEBUG: "True"
       <<: *db-settings
       DB_HOST: db
       DB_PORT: 5432
     volumes:
       - .:/opt/django
-    networks:
-      - backend
     ports:
       - "8000:8000"
 
 volumes:
   database-data:
-
-networks:
-  backend:
