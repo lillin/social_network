@@ -4,7 +4,8 @@ from rest_framework.routers import DefaultRouter
 from api.views import (
     SignUpView,
     PostViewSet,
-    LikeAnalyticsView
+    LikeAnalyticsView,
+    UserActivityView
 )
 
 
@@ -15,4 +16,5 @@ urlpatterns = [
 
 router = DefaultRouter()
 router.register(r'post', PostViewSet, 'post')
+router.register(f'user_activity', UserActivityView, 'user_activity')
 urlpatterns += router.urls

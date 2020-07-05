@@ -1,12 +1,16 @@
+from django.contrib.auth import get_user_model
 from django.db.models import Count
-from django.db.models.functions import TruncDay
+from django.db.models.functions import TruncDate
 
 from rest_framework.decorators import action
 from rest_framework.generics import (
     ListAPIView,
-    CreateAPIView
+    CreateAPIView,
 )
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import (
+    ModelViewSet,
+    ReadOnlyModelViewSet
+)
 from rest_framework.response import Response
 from rest_framework.permissions import (
     IsAuthenticated,
@@ -14,6 +18,7 @@ from rest_framework.permissions import (
 )
 from django_filters import rest_framework as filters
 
+from api.filters import DatesRangeFilter
 from api.models import (
     Post,
     Like
@@ -22,8 +27,12 @@ from api.permissions import ModifyOnlyOwner
 from api.serializers import (
     SignUpSerializer,
     PostSerializer,
-    LikeAnalyticsSerializer
+    LikeAnalyticsSerializer,
+    UserActivitySerializer
 )
+
+
+User = get_user_model()
 
 
 class SignUpView(CreateAPIView):
@@ -42,20 +51,9 @@ class PostViewSet(ModelViewSet):
         return {"request": self.request}
 
     @action(detail=True, methods=['POST'])
-    def like(self):
+    def like(self, request, pk):
         post = self.get_object()
-        # TODO: remove to separate method in Post obj.
-        # make it through get or create
-        like = Like.objects.filter(user=self.request.user, post=post)
-        if like.exists():
-            like.delete()
-            like = False
-            post.likes_amount -= 1
-        else:
-            Like.objects.create(user=self.request.user, post=post)
-            like = True
-            post.likes_amount += 1
-        post.save(update_fields=['likes_amount', ])
+        like = post.like(self.request.user)
         return Response({"like": like})
 
 
@@ -63,11 +61,14 @@ class LikeAnalyticsView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = LikeAnalyticsSerializer
     filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = DatesRangeFilter
 
     def get_queryset(self):
         queryset = \
-            Like.objects.annotate(date=TruncDay('created_at')).values('date').annotate(amount=Count('id'))
+            Like.objects.annotate(date=TruncDate('created_at')).values('date').annotate(amount=Count('id'))
         return queryset
 
 
-# TODO: user activity: last login + last request
+class UserActivityView(ReadOnlyModelViewSet):
+    queryset = User.objects.exclude(is_active=False)
+    serializer_class = UserActivitySerializer

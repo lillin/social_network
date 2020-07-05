@@ -45,3 +45,9 @@ class LikeAnalyticsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
         fields = ('date', 'amount',)
+
+
+class UserActivitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('last_activity', 'last_login',)
