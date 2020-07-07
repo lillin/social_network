@@ -72,6 +72,3 @@ class LikeAnalyticsView(ListAPIView):
 class UserActivityView(ReadOnlyModelViewSet):
     queryset = User.objects.exclude(is_active=False)
     serializer_class = UserActivitySerializer
-
-
-# TODO: add logout, inspect JWT auth
