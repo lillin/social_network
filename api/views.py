@@ -70,5 +70,6 @@ class LikeAnalyticsView(ListAPIView):
 
 
 class UserActivityView(ReadOnlyModelViewSet):
+    # TODO: fix null last_login
     queryset = User.objects.exclude(is_active=False)
     serializer_class = UserActivitySerializer
