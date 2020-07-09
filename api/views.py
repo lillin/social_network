@@ -70,9 +70,9 @@ class LikeAnalyticsView(ListAPIView):
     def get_queryset(self):
         queryset = \
             Like.objects.annotate(date=TruncDate('created_at')).values('date').annotate(amount=Count('id'))
-        return queryset
+        return queryset.order_by('date', 'amount')
 
 
 class UserActivityView(ReadOnlyModelViewSet):
-    queryset = User.objects.exclude(is_active=False)
+    queryset = User.objects.exclude(is_active=False).order_by('id')
     serializer_class = UserActivitySerializer
