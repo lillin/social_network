@@ -17,7 +17,7 @@ services:
     ports:
       - "5432:5432"
   web:
-    build: .
+    image: rudkovska/social-network:latest
     container_name: web
     command: python manage.py runserver 0.0.0.0:8000
     restart: always
