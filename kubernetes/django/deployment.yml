@@ -58,7 +58,8 @@ spec:
             value: 5432
         volumeMounts:
           name: postgres-volume-mount
-
+          mountPath:
+            /opt/django
     volumes:
       name: postgres-volume-mount
       persistentVolumeClaim:
