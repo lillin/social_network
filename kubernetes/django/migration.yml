@@ -1,20 +1,14 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: django-app
+  name: django-migrations
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: django
   template:
-    metadata:
-      labels:
-        app: django
     spec:
       containers:
-        - name: django-app
+        - name: django
           image: rudkovska/social-network:latest
+          command: ['python', 'manage.py', 'migrate']
           env:
             - name: POSTGRES_DB
               valueFrom:
@@ -37,12 +31,8 @@ spec:
             - name: DB_HOST
               value: db
 
-          ports:
-            - containerPort: 8000
-          volumeMounts:
-            - name: postgres-volume-mount
-              mountPath: /opt/django
-      volumes:
-        - name: postgres-volume-mount
-          persistentVolumeClaim:
-            claimName: postgres-pvc
+            - name: DB_PORT
+              value: "5432"
+
+      restartPolicy: Never
+  backoffLimit: 5
