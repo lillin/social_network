@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
 #  name of deployment
@@ -60,7 +60,7 @@ spec:
           name: postgres-volume-mount
           mountPath:
             /opt/django
-    volumes:
-      name: postgres-volume-mount
-      persistentVolumeClaim:
-        claimName: postgres-pvc
+      volumes:
+        name: postgres-volume-mount
+        persistentVolumeClaim:
+          claimName: postgres-pvc
