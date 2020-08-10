@@ -56,3 +56,10 @@ spec:
 
           - name: DB_PORT
             value: 5432
+        volumeMounts:
+          name: postgres-volume-mount
+
+    volumes:
+      name: postgres-volume-mount
+      persistentVolumeClaim:
+        claimName: postgres-pvc
