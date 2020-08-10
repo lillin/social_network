@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+#  name of deployment
+  name: django
+#  "tagging mechanism"
+  labels:
+    app: django
+spec:
+#  number of pods to run
+  replicas: 1
+  selector:
+    # specify pod to which apply deployment
+    matchLabels:
+      pod: django
+  template:
+    metadata:
+#      specify label to running pod
+      labels:
+        pod: django
+    spec:
+#      list of containers which belong to this pod
+#      in this case pod has one container - one image and one name in the list
+      containers:
+#        any str but should be descriptive enough
+        name: django
+#        image name which should be discoverable in local context
+#        or from remote repository registry
+        image: rudkovska/social-network:latest
+        command: ["./manage.py", "runserver", "0.0.0.0:8000"]
+#        port used by application
+        ports:
+          containerPort: 8000
+#         set env variables for django/setting.py
+        env:
+          - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: POSTGRES_DB
+
+          - name: POSTGRES_USER
+          valueFrom:
+            - secretKeyRef:
+                - name: postgres-credentials
+                - key: POSTGRES_USER
+
+          - name: POSTGRES_PASSWORD
+          valueFrom:
+            - secretKeyRef:
+                - name: postgres-credentials
+                - key: POSTGRES_PASSWORD
+
+          - name: DB_HOST
+            value: db
+
+          - name: DB_PORT
+            value: 5432
