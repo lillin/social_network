@@ -10,8 +10,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-from datetime import timedelta
 import os
+from datetime import timedelta
+
+import environ
+
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+env.read_env('.env')
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -86,8 +96,8 @@ DATABASES = {
         'NAME': os.environ.get('POSTGRES_DB', ''),
         'USER': os.environ.get('POSTGRES_USER', ''),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', ''),
-        'PORT': os.environ.get('DB_PORT', ''),
+        'HOST': os.environ.get('POSTGRES_HOST', ''),
+        'PORT': os.environ.get('POSTGRES_PORT', ''),
     }
 }
 
