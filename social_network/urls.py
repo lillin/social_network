@@ -13,10 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from rest_framework_swagger.views import get_swagger_view
-from rest_framework.documentation import include_docs_urls
 from django.contrib import admin
 from django.urls import path, include
+from django.views.decorators.csrf import csrf_exempt
+from graphene_django.views import GraphQLView
+from rest_framework.documentation import include_docs_urls
+from rest_framework_swagger.views import get_swagger_view
 
 
 API_TITLE = "SocialNetwork API"
@@ -27,6 +29,7 @@ schema_view = get_swagger_view(title="SocialNetwork API")
 
 urlpatterns = [
     path('api/', include('api.urls')),
+    path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True))),
     path('admin/', admin.site.urls),
     path("", schema_view),
     path(
